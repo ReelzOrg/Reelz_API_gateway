@@ -25,6 +25,11 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 const llmProtoDescriptor = (grpc.loadPackageDefinition(packageDefinition) as unknown as ProtoGrpcType).llm;
 const client = new llmProtoDescriptor.LLMService('localhost:50051', grpc.credentials.createInsecure());
 
+/**
+ * Ue this api to send and receive data from the llm_service
+ * @param req Standard express request object
+ * @param res express response object
+ */
 export async function llmChatClient(req: Request, res: Response) {
 	//Do some processing to create the prompt object
 

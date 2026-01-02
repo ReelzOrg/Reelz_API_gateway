@@ -1,4 +1,4 @@
-import { verifyEmail } from "../utils.js";
+import { verifyEmail } from "../../utils/general.ts";
 
 test("verifies the emails", () => {
 	expect(verifyEmail("virajdoshi123@gmail.com")).toBe(true);
