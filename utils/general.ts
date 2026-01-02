@@ -7,6 +7,12 @@ export function verifyEmail(email: string): boolean {
 	return regex.test(String(email).toLowerCase());
 }
 
+/**
+ * Use this function instead of process.env.<env_variable> for proper type checking in typescript
+ * @param key The Key as present in the env file
+ * @param defaultValue A default value to return if the key is not found
+ * @returns The value of the env variable (or default value if key not present)
+ */
 export function requiredEnv(key: string, defaultValue: string): string {
 	const value = process.env[key];
 	if (!value) {
