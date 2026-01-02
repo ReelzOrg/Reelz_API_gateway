@@ -1,3 +1,5 @@
+#I am not using loki, instead I am using Clickhouse for ease of use reasons
+
 auth_enabled: false
 
 server:

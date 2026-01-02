@@ -1,4 +1,4 @@
-import 'dotenv/config.js'
+import 'dotenv/config'
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -19,15 +19,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT_NUM || 5000;
+const PORT: number = parseInt(process.env.PORT_NUM || "5000");
+
+//use AyncLocalStorage for proper async context logging 
 
 app.use(pinoHttp({ logger }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(cors({origin:'*'}));
+app.use(cors({ origin: '*' }));
 // app.set("view engine", "ejs");
 // app.set('views', path.join(__dirname, 'views')); // Set the views directory
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRouter);
 app.use("/api/user", userDataRouter);
@@ -44,11 +46,11 @@ app.use("/api/posts", postRouter);
 // }
 // ----------------------------------------------
 
-app.get("/", async (req, res) => {
-  //fetch all the latests posts and storise by users following list
-  req.log.info("[TEST] - Fetching all users");
-  const result = await query("SELECT * FROM users");
-  res.json(result)
+app.get("/", async (req: any, res: any) => {
+	//fetch all the latests posts and storise by users following list
+	req.log.info("[TEST] - Fetching all users");
+	const result = await query("SELECT * FROM users");
+	res.json(result)
 });
 
 
@@ -56,25 +58,38 @@ app.get("/", async (req, res) => {
 // app.use(express.static(path.join(__dirname, 'public')));
 
 const server = app.listen(PORT, () => {
-  console.success("Server started on port: " + PORT);
+	console.log("Server started on port: " + PORT);
 });
+
+process.on("uncaughtException", (err) => {
+	logger.fatal(err, "Uncaught Exception");
+	shutDownServer();
+})
 
 // Clear all the resources when the server shuts down
 async function shutDownServer() {
-  console.warn("\x1b[33m%s\x1b[0m", "The server is shutting down. Cleaning up all the resources...");
+	console.warn("\x1b[33m%s\x1b[0m", "The server is shutting down. Cleaning up all the resources...");
 
-  await KafkaProducerManager.shutdownAll();
-  await closePool();
-  await neo4jDriver.close();
-  console.success("Neo4j pool closed successfully.");
+	await KafkaProducerManager.shutdownAll();
+	await closePool();
+	await neo4jDriver.close();
+	console.log("Neo4j pool closed successfully.");
+	logger.info("Neo4j pool closed successfully.");
 
-  typeSenseKeepAlive.destroy()
-  console.success("Typesense keep alive destroyed successfully.")
+	typeSenseKeepAlive.destroy()
+	console.log("Typesense keep alive destroyed successfully.")
+	logger.info("Typesense keep alive destroyed successfully.")
 
-  server.close(() => {
-    logger.info("Server has been shut down successfully.");
-    process.exit(0);
-  });
+	server.close(() => {
+		logger.info("Server has been shut down successfully.");
+		process.exit(0);
+	});
+
+	// If a graceful shutdown is not achieved after 1 second, shut down the process immediately
+	setTimeout(() => {
+		process.abort(); //exit immediately and generate core dump
+	}, 1000).unref();
+	process.exit(1);
 }
 
 process.on('SIGINT', shutDownServer);
