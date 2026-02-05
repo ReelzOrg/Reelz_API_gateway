@@ -12,7 +12,7 @@ export const s3 = new S3Client({
 	}
 });
 
-export async function getS3SignedUrl(res: Response, filePath: string, fileType: string) {
+export async function getS3SignedUrl(filePath: string, fileType: string) {
 	const command = new PutObjectCommand({
 		Bucket: "reelzapp",
 		Key: filePath,
@@ -47,7 +47,7 @@ export async function getS3SignedUrl(res: Response, filePath: string, fileType: 
 	}
 }
 
-export async function getMultipleSignedUrls(res: Response, bucketName: string, fileKeys: string[], fileTypes: string[]) {
+export async function getMultipleSignedUrls(bucketName: string, fileKeys: string[], fileTypes: string[]) {
 	const urls = await Promise.all(
 		fileKeys.map(async (key, index) => {
 			const command = new PutObjectCommand({

@@ -16,7 +16,12 @@ export interface User {
 	phone: string | undefined;
 	bio: string | undefined;
 	subscription_level: string | undefined;
-	password_hash: string | undefined;
-	created_at: string | undefined;
-	updated_at: string | undefined;
+	password_hash?: string | undefined;
+	created_at?: string | undefined;
+	updated_at?: string | undefined;
+}
+
+export enum LiveStreamRole {
+	BROADCASTER = "broadcaster",
+	VIEWER = "viewer"
 }

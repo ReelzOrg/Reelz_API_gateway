@@ -1,0 +1,21 @@
+version: v2
+clean: true
+managed:
+  enabled: true
+plugins:
+  # Pinning specific versions for stability
+  # The full path (./node_modules/@bufbuild/protoc-gen-es/bin/protoc-gen-es) is not needed because pnpm automatically adds it
+  # We are not using connect protocol
+  - local: protoc-gen-ts_proto
+    out: ./generated
+    include_imports: true
+    # opt: target=ts
+    opt:
+      - outputServices=grpc-js  # Critical: Tells it to generate for @grpc/grpc-js
+      - env=node
+      - esModuleInterop=true
+
+  # The @connectrpc/protoc-gen-connect-es pacakge is not in 2.x version yet, hence is not compatible
+  # - local: protoc-gen-connect-es
+  #   out: ./generated
+  #   opt: target=ts

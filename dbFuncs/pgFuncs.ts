@@ -1,14 +1,16 @@
 import 'dotenv/config.js'
 import pgsql, { type QueryResultRow } from 'pg';
+
 import logger from '../utils/logger.js';
+import { requiredEnv } from '../utils/general.js';
 
 //https://node-postgres.com/guides/pool-sizing
 const pool = new pgsql.Pool({
-	user: process.env.POSTGRES_USER,
-	host: process.env.POSTGRES_HOST,
-	database: process.env.POSTGRES_DB,
-	password: process.env.POSTGRES_PASSWORD,
-	port: parseInt(process.env.POSTGRES_PORT || "5432"), // Default PostgreSQL port
+	user: requiredEnv("POSTGRES_USER", "postgres"),
+	host: requiredEnv("POSTGRES_HOST", "localhost"),
+	database: requiredEnv("POSTGRES_DB", "postgres"),
+	password: requiredEnv("POSTGRES_PASSWORD", "postgres"),
+	port: parseInt(requiredEnv("POSTGRES_PORT", "5432")), // Default PostgreSQL port
 });
 
 pool.on("connect", () => {

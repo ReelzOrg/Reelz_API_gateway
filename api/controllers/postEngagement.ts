@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Request, Response } from "ultimate-express";
 
 import logger from "../../utils/logger.js";
 import { transactionQuery, query } from "../../dbFuncs/pgFuncs.js";

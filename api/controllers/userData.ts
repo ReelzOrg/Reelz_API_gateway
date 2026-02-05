@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Request, Response } from "ultimate-express";
 
 import { query } from "../../dbFuncs/pgFuncs.js";
 import { KafkaProducerManager } from "../../utils/kafka/kafkaUtils.js";
@@ -58,8 +58,9 @@ export async function getUserProfile(req: Request, res: Response) {
 			phone: requestedUser[0]?.phone,
 			subscription_level: requestedUser[0]?.subscription_level,
 			bio: requestedUser[0]?.bio,
-			password_hash: requestedUser[0]?.password_hash,
-			created_at: requestedUser[0]?.created_at,
+			// obviously not sending the password hash
+			// password_hash: requestedUser[0]?.password_hash,
+			// created_at: requestedUser[0]?.created_at,
 			updated_at: requestedUser[0]?.updated_at
 		}
 
@@ -314,8 +315,8 @@ export async function handleUnFollow(req: Request, res: Response) {
 	const relationshipExists = result[0]?.get("relationshipExists");
 
 	if (relationshipExists) {
-		const deleteFollowQuery = `MATCH (follower:User {_id: $loggedInUser})-[r:${followStatus}]->(following:User {_id: $requestedUser}) DELETE r;`;
-		const records = await neo4jQuery(deleteFollowQuery, { loggedInUser: req.user?.userId, requestedUser: reqUserId }, "deleteFollowRelationship");
+		const deleteFollowQuery = `MATCH (follower:User {_id: $loggedInUser})-[r:$followStatus]->(following:User {_id: $requestedUser}) DELETE r;`;
+		const records = await neo4jQuery(deleteFollowQuery, { loggedInUser: req.user?.userId, followStatus: followStatus, requestedUser: reqUserId }, "deleteFollowRelationship");
 		console.log("The relationship has been deleted:", records);
 	}
 

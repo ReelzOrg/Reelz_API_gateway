@@ -1,12 +1,12 @@
 {
-  "editor.tabSize": 2,
-  "files.watcherExclude": {
-    "**/.git/objects/**": true,
-    "**/node_modules/**": true
-  },
-  "files.exclude": {
-    "**/node_modules": true,
-    // "tests/**": true,
-    // ".env": true
-  }
+	"editor.tabSize": 2,
+	"files.watcherExclude": {
+		"**/.git/objects/**": true,
+		"**/node_modules/**": true
+	},
+	"files.exclude": {
+		"**/node_modules": true,
+		// "tests/**": true,
+		// ".env": true
+	}
 }

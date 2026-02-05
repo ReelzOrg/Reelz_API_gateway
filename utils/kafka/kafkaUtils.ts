@@ -2,11 +2,12 @@ import { KafkaJS, type Message } from "@confluentinc/kafka-javascript";
 import { SchemaRegistry, SchemaType } from "@kafkajs/confluent-schema-registry";
 import logger from "../logger.js";
 import { CompressionTypes, type Producer, type ProducerConstructorConfig, type ProducerRecord } from "@confluentinc/kafka-javascript/types/kafkajs.js";
+import { requiredEnv } from "../general.js";
 
 // --- Kafka and Schema Registry Configuration ---
 // Use environment variables for production readiness.
-const KAFKA_BROKERS = (process.env.KAFKA_BROKERS || 'localhost:9092').split(',').map(b => b.trim());
-const SCHEMA_REGISTRY_HOST = process.env.SCHEMA_REGISTRY_HOST || 'http://localhost:8081';
+const KAFKA_BROKERS = (requiredEnv("KAFKA_BROKERS", "localhost:9092")).split(',').map(b => b.trim());
+const SCHEMA_REGISTRY_HOST = requiredEnv("SCHEMA_REGISTRY_HOST", 'http://localhost:8081');
 
 const kafka = new KafkaJS.Kafka({
 	kafkaJS: {

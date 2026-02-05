@@ -1,6 +1,6 @@
 import 'dotenv/config'
-import express from 'express';
-import bodyParser from 'body-parser';
+// import express from 'express';
+import express from 'ultimate-express';
 import cors from 'cors';
 import { pinoHttp } from 'pino-http';
 
@@ -8,7 +8,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
-import { authRouter, userDataRouter, searchRouter, chatRouter, postRouter } from './api/routes/index.js';
+import { authRouter, userDataRouter, searchRouter, chatRouter, postRouter, liveStreamRouter } from './api/routes/index.js';
 import { KafkaProducerManager } from './utils/kafka/kafkaUtils.js';
 import { query, closePool } from './dbFuncs/pgFuncs.js';
 import { initTypesense, syncTypeSense, typeSenseKeepAlive } from './dbFuncs/typesenseFuncs.js';
@@ -18,7 +18,13 @@ import logger from './utils/logger.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const app = express();
+const app = express({
+	// http3: true,
+	// uwsOptions: {
+	// 	key_file_name: '/path/to/example.key',
+	// 	cert_file_name: '/path/to/example.crt'
+	// }
+});
 const PORT: number = parseInt(process.env.PORT_NUM || "5000");
 
 //use AyncLocalStorage for proper async context logging 
@@ -29,13 +35,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors({ origin: '*' }));
 // app.set("view engine", "ejs");
 // app.set('views', path.join(__dirname, 'views')); // Set the views directory
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.urlencoded({ extended: true })); // Firstly, we are not using x-www-form-urlencoded and secondly, ultimate-express already has built-in middleware to parse JSON and URL-encoded data
 
 app.use("/api/auth", authRouter);
 app.use("/api/user", userDataRouter);
 app.use("/api/llm", chatRouter);
 app.use("/api/search", searchRouter);
 app.use("/api/posts", postRouter);
+app.use("/api/live", liveStreamRouter);
 
 //TypeSence Functions ---------------------------
 // await initTypesense();
@@ -80,10 +87,11 @@ async function shutDownServer() {
 	console.log("Typesense keep alive destroyed successfully.")
 	logger.info("Typesense keep alive destroyed successfully.")
 
-	server.close(() => {
-		logger.info("Server has been shut down successfully.");
-		process.exit(0);
-	});
+	// server.close(() => {
+	// 	logger.info("Server has been shut down successfully.");
+	// 	process.exit(0);
+	// });
+	server.close();
 
 	// If a graceful shutdown is not achieved after 1 second, shut down the process immediately
 	setTimeout(() => {

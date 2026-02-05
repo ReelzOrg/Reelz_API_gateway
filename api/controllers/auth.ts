@@ -1,7 +1,7 @@
 import 'dotenv/config.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import type { Request, Response } from 'express';
+import type { Request, Response } from 'ultimate-express';
 import { OAuth2Client } from 'google-auth-library';
 
 import { query, transactionQuery } from '../../dbFuncs/pgFuncs.js';

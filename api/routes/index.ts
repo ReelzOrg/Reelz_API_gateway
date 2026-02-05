@@ -3,5 +3,6 @@ import userDataRouter from "./userDataRoute.js";
 import searchRouter from "./searchRoute.js";
 import chatRouter from "./chatRoutes.js";
 import postRouter from "./engagementRoutes.js";
+import liveStreamRouter from "./liveStreamRouter.js";
 
-export { authRouter, userDataRouter, searchRouter, chatRouter, postRouter };
+export { authRouter, userDataRouter, searchRouter, chatRouter, postRouter, liveStreamRouter };

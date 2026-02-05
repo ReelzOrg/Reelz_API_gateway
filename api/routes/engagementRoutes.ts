@@ -1,10 +1,11 @@
-import express from 'express';
+import express from 'ultimate-express';
+import type { Router } from 'ultimate-express';
 
 import { authenticateToken } from '../../middleware/index.js';
 import { commentOnPost, getCommentsOnPost, likeOnPost } from '../controllers/postEngagement.js';
 
 //  api/posts/
-const router = express.Router();
+const router: Router = express.Router();
 
 // The :id is the post ID
 router.post("/:id/like", authenticateToken, likeOnPost);
