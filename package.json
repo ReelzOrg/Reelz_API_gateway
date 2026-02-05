@@ -69,6 +69,8 @@
 	"devDependencies": {
 		"@bufbuild/buf": "^1.64.0",
 		"@google-cloud/local-auth": "^3.0.1",
+		"@swc/core": "^1.15.11",
+		"@swc/jest": "^0.2.39",
 		"@tsconfig/node-lts": "^22.0.3",
 		"@types/body-parser": "^1.19.6",
 		"@types/cors": "^2.8.19",

@@ -10,9 +10,31 @@ permissions:
   contents: read
 
 jobs:
+  # Job 1: Static Analysis / Type Checking
+  type-check:
+    name: TypeScript Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: latest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tsc
+        # --noEmit ensures we only check types without generating files
+        run: pnpm exec tsc --noEmit
+
   test:
     name: Run Jest tests
     runs-on: ubuntu-latest
+    # This job runs in parallel with type-check for maximum efficiency
     strategy:
       matrix:
         node-version: [22.x]
@@ -41,4 +63,6 @@ jobs:
       - name: Run tests (CI)
         env:
           CI: true
+          # Force Node to treat .ts files as ESM during execution
+          NODE_OPTIONS: "--experimental-vm-modules"
         run: pnpm run test:ci
