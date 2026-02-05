@@ -114,7 +114,7 @@ async function createRoomAsync(client: LiveVideoServiceClient, request: CreateRo
 		//remove the authorization token from the request body and the proto file.
 		metadata.add("Authorization", `Bearer ${jwtToken}`);
 
-		client.createRoom(request, metadata, { deadline }, (err, resp) => {
+		client.createRoom(request, metadata, { deadline }, (err: grpc.ServiceError | null, resp: CreateRoomResponse) => {
 			if (err) {
 				if (err.code === grpc.status.DEADLINE_EXCEEDED) {
 					logger.error(`[Gateway Client] Failed to create room for request ${requestId}: Deadline exceeded`);

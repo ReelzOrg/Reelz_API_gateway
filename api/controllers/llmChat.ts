@@ -8,6 +8,8 @@ import grpc from "@grpc/grpc-js";
 // TODO: Use generated types instead of @grpc/proto-loader (which reads the proto file on the runtime)
 // TODO: Implement the llmChatClient function
 
+export async function llmChatClient() { }
+
 /**
  * Ue this api to send and receive data from the llm_service
  * @param req Standard express request object

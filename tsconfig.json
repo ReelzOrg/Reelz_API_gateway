@@ -1,63 +1,64 @@
 {
-  "extends": "@tsconfig/node-lts/tsconfig.json",
-  "include": [
-    "app.ts",
-    "dbFuncs/**/*.ts",
-    "middleware/**/*.ts",
-    "api/**/*.ts",
-    "types/**/*.d.ts",
-    "env.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ],
-  // Visit https://aka.ms/tsconfig to read more about this file
-  "compilerOptions": {
-    // File Layout
-    "rootDir": "./",
-    "outDir": "./dist",
-    "typeRoots": [
-      "./node_modules/@types",
-      "./types"
-    ],
-    // This overrides the default "scan everything" behavior
-    "types": [
-      "node"
-    ],
-    // Environment Settings
-    // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "esModuleInterop": true,
-    "target": "ES2022",
-    // For nodejs:
-    // "lib": [
-    //   "esnext"
-    // ],
-    // and npm install -D @types/node
-    // Other Outputs
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-    // Stricter Typechecking Options
-    "noUncheckedIndexedAccess": true,
-    // "exactOptionalPropertyTypes": true,
-    // Style Options
-    // "noImplicitReturns": true,
-    // "noImplicitOverride": true,
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true,
-    // "noFallthroughCasesInSwitch": true,
-    // "noPropertyAccessFromIndexSignature": true,
-    // Recommended Options
-    // "strict": true,
-    "allowJs": true,
-    "jsx": "react-jsx",
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force",
-    "skipLibCheck": true,
-  }
+	"extends": "@tsconfig/node-lts/tsconfig.json",
+	"include": [
+		"app.ts",
+		"dbFuncs/**/*.ts",
+		"middleware/**/*.ts",
+		"api/**/*.ts",
+		"types/**/*.d.ts",
+		"env.d.ts"
+	],
+	"exclude": [
+		"node_modules",
+		"dist"
+	],
+	// Visit https://aka.ms/tsconfig to read more about this file
+	"compilerOptions": {
+		// File Layout
+		"rootDir": "./",
+		"outDir": "./dist",
+		"typeRoots": [
+			"./node_modules/@types",
+			"./types"
+		],
+		// This overrides the default "scan everything" behavior
+		"types": [
+			"node"
+		],
+		// Environment Settings
+		// See also https://aka.ms/tsconfig/module
+		"module": "nodenext",
+		"moduleResolution": "nodenext",
+		"esModuleInterop": true,
+		"target": "ES2022",
+		// For nodejs:
+		// "lib": [
+		//   "esnext"
+		// ],
+		// and npm install -D @types/node
+		// Other Outputs
+		"sourceMap": true,
+		"declaration": true,
+		"declarationMap": true,
+		// Stricter Typechecking Options
+		"noUncheckedIndexedAccess": true,
+		// "exactOptionalPropertyTypes": true,
+		// Style Options
+		// "noImplicitReturns": true,
+		// "noImplicitOverride": true,
+		// "noUnusedLocals": true,
+		// "noUnusedParameters": true,
+		// "noFallthroughCasesInSwitch": true,
+		// "noPropertyAccessFromIndexSignature": true,
+		// Recommended Options
+		// "strict": true,
+		"allowJs": true,
+		"jsx": "react-jsx",
+		"verbatimModuleSyntax": true,
+		"isolatedModules": true,
+		"noUncheckedSideEffectImports": true,
+		"moduleDetection": "force",
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true
+	}
 }

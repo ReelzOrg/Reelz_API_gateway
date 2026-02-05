@@ -6,4 +6,3 @@ coverage
 client_secret_484787419871-ua72bppqcfmc1ln7jv5443hvmmn715dd.apps.googleusercontent.com.json
 .env.test
 dist
-/generated
