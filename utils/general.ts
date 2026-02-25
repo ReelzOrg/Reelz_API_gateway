@@ -83,12 +83,13 @@ export async function getBestMediaNode() {
 }
 
 /**
+ * Caches the streamId with the respective SFU node IP for viewers
  * @param streamId The ID of the stream
  * @param nodeIp The IP address of the node where the stream is hosted
  * @returns The result of the set operation
  */
 export async function setStreamToNode(streamId: string, nodeIp: string) {
-	const cachedStream = await valkeyClient?.set(`stream:${streamId}`, nodeIp, { expiry: { type: TimeUnit.Seconds, count: 60 } });
+	const cachedStream = await valkeyClient?.set(`sfu:stream:${streamId}`, nodeIp, { expiry: { type: TimeUnit.Seconds, count: 60 } });
 	return cachedStream;
 }
 

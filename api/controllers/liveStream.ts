@@ -1,7 +1,7 @@
 import type { Request, Response } from "ultimate-express";
 import { v4 as uuidv4 } from "uuid";
-import jwt from "jsonwebtoken";
 import * as grpc from "@grpc/grpc-js";
+import jwt from "jsonwebtoken";
 
 import { query } from "../../dbFuncs/index.js";
 import { getBestMediaNode, getNodeForStream, requiredEnv, setStreamToNode } from "../../utils/general.js";
@@ -34,29 +34,11 @@ export async function startStream(req: Request, res: Response) {
 	// TODO: if the user is a premium user then give them better quality
 
 	// fetching the node with the least cpu load
+	// TODO: add retry logic for both get and set
 	const bestNode = await getBestMediaNode();
 	if (!bestNode) return res.json({ success: false, message: "No available nodes" });
 
 	const streamId = uuidv4();
-	// send this token to the client, which then passes it the media node
-	const secretToken = jwt.sign(
-		{ userId: loggedInUser, streamId, role: LiveStreamRole.BROADCASTER },
-		requiredEnv("LIVE_STREAM_SECRET", "bruhWhat"),
-		{ expiresIn: "2M" }
-	);
-
-	// we need to check the broadcasterId on the media node as well, hence we pass it to the media node
-	const request: CreateRoomRequest = {
-		streamId,
-		broadcasterId: loggedInUser,
-		config: {
-			enableHls: true,
-			enableRecording: req.body.enableRecording || false
-		} as BroadcastConfig,
-		// tokens will be added in the headers
-		// auth: { secretToken } as AuthProperties
-	};
-
 	// cache the stream for viewers to join later
 	const streamCached = await setStreamToNode(streamId, bestNode.internalIp);
 	if (!streamCached) return res.json({ success: false, message: "Failed to cache stream" });
@@ -74,14 +56,37 @@ export async function startStream(req: Request, res: Response) {
 		// client is created dynamically based on the best node
 		// use grpc.credentials.createSsl to create a secure connection in production
 		client = LiveVideoClientManager.getInstance().getClient(bestNode.internalIp, 50051, config);
+
+		// we need to check the broadcasterId on the media node as well, hence we pass it to the media node
+		const request: CreateRoomRequest = {
+			streamId,
+			broadcasterId: loggedInUser,
+			config: {
+				enableHls: true,
+				enableRecording: req.body.enableRecording || false
+			} as BroadcastConfig,
+			// tokens will be added in the headers
+			// auth: { secretToken } as AuthProperties
+		};
+
 		// This sends the request to the best node available as calculated above (getBestMediaNode)
-		response = await createRoomAsync(client, request, secretToken);
+		// Wait for the room to be created and then send the token to the client
+		// A faster way would be to not wait but then requires handling the case when client tries to
+		// join before the room could be created
+		response = await createRoomAsync(client, request, requiredEnv("LIVE_STREAM_SECRET", "bruhWhat"));
 		if (!response) return res.json({ success: false, message: "Failed to create room" });
 	} catch (err) {
 		const error = err as grpc.ServiceError;
 		logger.error(`[Gateway Client] Failed to create room: ${error.message} with code ${error.code}`);
 		return res.json({ success: false, message: "Failed to create room" });
 	}
+
+	// send this token to the client, which then passes it to the media node
+	const secretToken = jwt.sign(
+		{ userId: loggedInUser, streamId: streamId, role: LiveStreamRole.BROADCASTER },
+		requiredEnv("LIVE_STREAM_ROOM_PUBLIC_KEY", "is_room_created?"),
+		{ expiresIn: "2M" }
+	);
 
 	// send the auth token (for the media node to verify) and the connection link
 	// send the link to connect to the stream
@@ -104,15 +109,17 @@ export async function joinStream(req: Request, res: Response) {
 	return res.json({ streamUrl: `ws://${nodeIp}:50051` });
 }
 
-async function createRoomAsync(client: LiveVideoServiceClient, request: CreateRoomRequest, jwtToken: string): Promise<CreateRoomResponse> {
+async function createRoomAsync(client: LiveVideoServiceClient, request: CreateRoomRequest, liveStreamSecret: string): Promise<CreateRoomResponse> {
 	return new Promise((resolve, reject) => {
 		const deadline = new Date(Date.now() + 2000);
 		const metadata = new grpc.Metadata();
 
 		const requestId = uuidv4();
 		metadata.add("x-request-id", requestId);
-		//remove the authorization token from the request body and the proto file.
-		metadata.add("Authorization", `Bearer ${jwtToken}`);
+		// The bearer token here is not a JWT token, it's a secret key that's used to verify that this
+		// request is coming from api gateway.
+		// A better way would to to use encrypted keys
+		metadata.add("Authorization", `Bearer ${liveStreamSecret}`);
 
 		client.createRoom(request, metadata, { deadline }, (err: grpc.ServiceError | null, resp: CreateRoomResponse) => {
 			if (err) {

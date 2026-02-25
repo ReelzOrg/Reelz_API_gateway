@@ -6,6 +6,9 @@ import { ProducerNames } from "../../utils/kafka/types.js";
 import { neo4jQuery } from "../../dbFuncs/neo4jFuncs.js";
 import type { User } from "../../types/user.js";
 
+// When a user uploads a reel, post, or story then check the sucscription level and then generate the metadata for the media file
+// This might help in future features where we use Gen-UI to create dynamic UIs
+
 /** Time decayed weight calculation for the closeness of 2 users
  * MATCH (u1:User)-[follow:FOLLOWS]->(u2:User)
 OPTIONAL MATCH (u1)-[interaction:LIKED|COMMENTED|SHARED]->(post:Post)<-[:POSTED]-(u2)

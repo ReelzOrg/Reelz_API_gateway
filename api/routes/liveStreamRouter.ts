@@ -9,6 +9,6 @@ const router: Router = express.Router();
 
 //Check for users subscription if the streamer has a subscribers only stream
 router.post("/start", authenticateToken, startStream);
-router.post("/join/:streamId", authenticateToken, joinStream);
+router.post("/join/:streamId", joinStream);
 
 export default router;

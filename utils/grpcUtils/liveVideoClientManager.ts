@@ -32,6 +32,7 @@ export default class LiveVideoClientManager {
 			throw new Error(`Max client instances reached: ${this.clients.size}`);
 		}
 
+		//Create a new idle connection to this new host
 		const newClient = new LiveVideoServiceClient(
 			`${host}:${port}`,
 			grpc.credentials.createInsecure(),

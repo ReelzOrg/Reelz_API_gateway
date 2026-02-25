@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+protos/
+servicesToConsider.txt
+
+# Environment variables
+.env
+.env.*
+.dockerignore
+
+# Config
+loki-config.yaml
+
+# Tests
+coverage/
+tests/
+
+# generated
+generated/
+dist/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.vscode/
+
+# Frontend
+/views
+
+# Secrets
+/client_secret_484787419871-ua72bppqcfmc1ln7jv5443hvmmn715dd.apps.googleusercontent.com.json
+
+# Images
+Postgres_DB.png
+searchApiDiagram.png
